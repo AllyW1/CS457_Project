@@ -1,0 +1,71 @@
+Statement of Work (SOW) Template for Socket Programming Project
+Project Title:
+CS457 Tic Tac Toe Game
+
+Team:
+Allison Whittern
+
+Project Objective:
+Create a multiplayer game of tic tac toe that allows me to learn more about how servers communicate and work on coding with sockets.
+
+Scope:
+Inclusions:
+- Visual 3 by 3 grid.
+- Ability for user to put an X or O in each position of grid.
+- Ability for One players to go then when done the next player can go. 
+- Keep Track of score.
+- Best of 3 games. 
+
+Exclusions:
+- Person won't choose who goes first.
+
+Deliverables:
+- Fully functional server and client-side code.
+- Playable Tic-Tac-Toe game via the command line interface.
+- Finished GitHub repository containing all source code, documentation, and a README file with setup instructions.
+
+Timeline:
+- Sprint 0: Form teams, Setup Tools, Submit SOW [Template] (Sept 08-Sept 22)
+- Sprint 1: Socket Programming, TCP Client Server (Sept 22-Oct 06)
+- Sprint 2:  Develop Game Message Protocol, Manage Client connections (Oct 06-Oct 20)
+- Sprint 3:  Multi-player functionality, Synchronize state across clients. (Oct 20-Nov 03)
+- Sprint 4:  Game play, Game State (Nov 03-Nov 17)
+- Sprint 5: Implement Error Handling and Testing (Nov 17-Dec 6)
+
+Key Milestones:
+- Sprint 1 Completion: Establish basic socket connection between server and clients. (Oct 06)
+- Sprint 3 Completion: Full multiplayer functionality and synchronized game state across clients. (Nov 03)
+- Final Game Release: Fully functional, error-handled, tested Tic-Tac-Toe game. (Dec 06)
+
+Task Breakdown:
+Socket Programming (Sprint 1): 1 Day
+Game Protocol Development (Sprint 2): 1 Day
+Multiplayer Sync & Game State (Sprint 3): 1 Day
+Game Logic Implementation (Sprint 4): 1 Day
+Error Handling & Testing (Sprint 5): 1 Day
+
+Technical Requirements:
+Hardware:
+- Local machines or virtual servers for client and server testing.
+- Network setup to allow client-server communication.
+
+Software:
+- Programming Language: Python
+- Libraries: socket, threading
+- Development Tools: Git, VS Code
+- Operating System: Cross-platform (Windows, macOS, Linux)
+
+Assumptions:
+- Stable network connectivity for testing client-server communication.
+- Availability of required development tools and libraries.
+- Game will be run on local machines for simplicity.
+
+Roles and Responsibilities:
+- Just me so I'll do everything.
+
+Communication Plan:
+- Completing assignments on time through Canvas to ensure I'm on track.
+- Reaching out over teams for any questions.
+
+Additional Notes:
+N/A
