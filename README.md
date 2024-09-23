@@ -1,6 +1,7 @@
 Creator: Allison Whittern
 
 # Tic-Tac-Toe Game
+
 ![image](https://github.com/user-attachments/assets/543d15a8-89b7-49b1-b6c6-8a08649d4519)
 
 This is a simple Tic-Tac-Toe game implemented using Python and sockets. Made for CS457 at CSU.
@@ -17,3 +18,5 @@ This is a simple Tic-Tac-Toe game implemented using Python and sockets. Made for
 **Additional resources:**
 * [Link to Python documentation]
 * [Link to sockets tutorial]
+- [Python documentation](https://docs.python.org/3/)
+- [Python socket tutorial](https://realpython.com/python-sockets/)
