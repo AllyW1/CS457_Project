@@ -8,16 +8,25 @@ This is a simple Tic-Tac-Toe game implemented using Python and sockets. Made for
 
 **How to play:**
 1. **Start the server:** Run the `server.py` script.
+   - terminal: python3 server.py [hostname] [port]
+   - Ex: python3 server.py localhost 9000
 2. **Connect clients:** Run the `client.py` script on two different machines or terminals.
+   - terminal: python3 client.py [hostname] [port]
+   - python3 client.py localhost 9000
+   - ENSURE client and server are looking at the same port. In the example that is localhost 9000
 3. **Play the game:** Players take turns entering their moves. The first player to get three in a row wins!
+   - More in depth instructions to come in future sprints. For now the server and client are simply repeating things back. 
 
 **Technologies used:**
-* Python
-* Sockets
+* Python 3.x
+* Standard Python libraries: `socket`, `selectors`
 
 **Additional resources:**
 - [Python documentation](https://docs.python.org/3/)
 - [Python socket tutorial](https://realpython.com/python-sockets/)
+
+**Note for CS457 Graders**
+The requirements.txt is empty as I am only using the Standard Python Library. If that is not how I am suppoused to do it please let me know!
 
 # Steps taken to create
 **Step 0 (Sprint 0):**
