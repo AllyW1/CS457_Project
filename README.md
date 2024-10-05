@@ -44,6 +44,6 @@ This is a simple Tic-Tac-Toe game implemented using Python and sockets. Made for
   - Verify that clients can connect to the server and exchange messages.
   - Debug any issues related to network communication or socket operations.
 - Update README
--Include requirements.txt file (only need one per git repository)
+- Include requirements.txt file (only need one per git repository)
   - This is done within a virtual python environment by running
   - pip freeze > requirements.txt
