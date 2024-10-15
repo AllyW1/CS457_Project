@@ -20,6 +20,9 @@ This is a simple Tic-Tac-Toe game implemented using Python and sockets. Made for
    - Players take turns entering their moves. The move is entered as a number (1-9), corresponding to the position on the Tic-Tac-Toe grid.
    - The first player to get three in a row (horizontally, vertically, or diagonally) wins!
    - The game will also end if all nine spaces are filled and no player has won, resulting in a draw.
+     <img width="323" alt="image" src="https://github.com/user-attachments/assets/11869fe2-1eca-47f9-92a0-520ffd20ac1a">
+   - You will look at the position key. Choose the number of the position you are choosing. Then wait till it is your turn again. 
+
 4. **End of Game:**
    - When a player wins, the game will announce "Game Over! Player X/O wins!"
    - If the game results in a draw, it will announce "Game Over! The game is a draw!"
