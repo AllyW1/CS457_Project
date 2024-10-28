@@ -16,7 +16,7 @@ This is a simple Tic-Tac-Toe game implemented using Python and sockets. Made for
    - ENSURE client and server are looking at the same port. In the example that is localhost 9000
    - Game won't start until two clients are connected to the server.
 3. **Play the game:** Players take turns entering their moves. The first player to get three in a row wins!
-   - Players are allowed to set a username if they choose not to then they will be default assigned symbols: Player X and Player O.
+   - Players are allowed to set a username if they choose not to then they will be default assigned numbers/symbols: Player 1(X) and Player 2(O).
    - Players take turns entering their moves. The move is entered as a number (1-9), corresponding to the position on the Tic-Tac-Toe grid.
    - The first player to get three in a row (horizontally, vertically, or diagonally) wins!
    - The game will also end if all nine spaces are filled and no player has won, resulting in a draw.
