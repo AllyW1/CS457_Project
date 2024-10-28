@@ -32,7 +32,7 @@ This is a simple Tic-Tac-Toe game implemented using Python and sockets. Made for
 - Message Types:
    - Join: Sent when a client joins the server.
 json
-{ "type": "join" }
+{ "type": "username_response", "username": "player_name" }
    - Move: Sent when a player makes a move by selecting a position on the board.
 json
 { "type": "move", "position": 5 }
@@ -43,12 +43,31 @@ json
 json
 {
   "type": "response",
-  "message": "Player X's turn.",
-  "board": "1 | 2 | 3\n4 | 5 | 6\n7 | 8 | 9\n"
+  "message": "Player X's turn."
+}
+   - Turn: Sent to notify clients whose turn it is to play.
+json
+{
+  "type": "turn",
+  "message": "player_name's turn. Your move.",
+  "board": "Position Key:    Current Board:\n 1 | 2 | 3      X |   |  \n---+---+---    ---+---+---\n 4 | 5 | 6      O | X |  \n---+---+---    ---+---+---\n 7 | 8 | 9      X | O |  "
+   - Move Acknowledgement: Sent from the server when a move has been made successfully, showing the updated board state.
+json
+{
+  "type": "move",
+  "message": "player_name placed X at position 5.",
+  "board": "Position Key:    Current Board:\n 1 | 2 | 3      X |   |  \n---+---+---    ---+---+---\n 4 | 5 | 6      O | X |  \n---+---+---    ---+---+---\n 7 | 8 | 9      X | O |  "
+}
+   - End: Sends the result of the game after a win condition.
+json
+{
+  "type": "end",
+  "message": "Game Over! player_name (X) wins!",
+  "board": "Position Key:    Current Board:\n 1 | 2 | 3      X | O | X \n---+---+---    ---+---+---\n 4 | 5 | 6      O | X |  \n---+---+---    ---+---+---\n 7 | 8 | 9      X | O |  "
 }
 
 **Technologies used:**
-* Python 3.x
+* Python 3.6
 * Standard Python libraries: `socket`, `selectors`
 * Communication Protocol: JSON for client-server communication
 
