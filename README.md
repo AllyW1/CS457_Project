@@ -16,15 +16,15 @@ This is a simple Tic-Tac-Toe game implemented using Python and sockets. Made for
    - ENSURE client and server are looking at the same port. In the example that is localhost 9000
    - Game won't start until two clients are connected to the server.
 3. **Play the game:** Players take turns entering their moves. The first player to get three in a row wins!
-   - Players are assigned symbols: Player X and Player O.
+   - Players are allowed to set a username if they choose not to then they will be default assigned symbols: Player X and Player O.
    - Players take turns entering their moves. The move is entered as a number (1-9), corresponding to the position on the Tic-Tac-Toe grid.
    - The first player to get three in a row (horizontally, vertically, or diagonally) wins!
    - The game will also end if all nine spaces are filled and no player has won, resulting in a draw.
-     <img width="323" alt="image" src="https://github.com/user-attachments/assets/11869fe2-1eca-47f9-92a0-520ffd20ac1a">
+     <img width="729" alt="image" src="https://github.com/user-attachments/assets/f3b33c63-d20f-4945-b8e3-7d22b3e4d154">
    - You will look at the position key. Choose the number of the position you are choosing. Then wait till it is your turn again. 
 
 4. **End of Game:**
-   - When a player wins, the game will announce "Game Over! Player X/O wins!"
+   - When a player wins, the game will announce "Game Over! Player (username or X/O) wins!"
    - If the game results in a draw, it will announce "Game Over! The game is a draw!"
    - Game will force quit, Server and Client Connections will be cleaned up. (If you want to play again just start up the server and clients again)
 
@@ -106,3 +106,20 @@ The requirements.txt is empty as I am only using the Standard Python Library. If
    - Implement mechanisms to handle client connections and disconnections.
    - Maintain a list of connected clients and their associated game data.
    - Notify other clients when a player joins or leaves the game.
+
+**Step 3 (Sprint 3):**
+- Game State Synchronization:
+   - Implement a mechanism to synchronize the game state across all connected clients.
+   - Use a central server to broadcast game state updates to all clients.
+   - Implement techniques to handle network latency and ensure consistent gameplay.
+- Client-Side Game Rendering:
+   - Develop the client-side logic to render the game state based on updates received from the server.
+   - Ensure that all clients display the same game state/board and player updates/moves.
+- Turn-Based Gameplay:
+   - Implement a system to manage player turns and ensure that only the current player can make moves.
+   - If players compete for first time to answer implement the functionality to determine which player responded first
+   - Synchronize turn information across all clients.
+- Player Identification:
+   - Assign unique identifiers to each player to distinguish them and track their game state.
+   - Allow players to choose or be assigned unique usernames or avatars.
+
