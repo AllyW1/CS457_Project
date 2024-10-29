@@ -4,8 +4,7 @@ import json
 import argparse
 import logging
 
-# Set up logging
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 
 class TicTacToeServer:
     def __init__(self, host, port):
@@ -50,7 +49,7 @@ class TicTacToeServer:
         try:
             message_str = json.dumps(message) + '\n'  # Add newline delimiter
             client_socket.sendall(message_str.encode('utf-8'))
-            logging.info(f'Sent message to client: {message}')
+            logging.info(f"Sent message to client: {message}")
         except (ConnectionResetError, BrokenPipeError):
             self.disconnect_client(client_socket)
 
@@ -87,7 +86,7 @@ class TicTacToeServer:
         
         try:
             message = json.loads(data)
-            logging.info(f'Received message from client: {message}')
+            logging.info(f"Received message from client: {message}")
         except json.JSONDecodeError:
             self.send_message(sock, {'type': 'error', 'message': "Invalid message format."})
             return
@@ -108,10 +107,8 @@ class TicTacToeServer:
                 pos = message.get('position')
                 if 1 <= pos <= 9 and self.board[pos - 1] == ' ':
                     self.board[pos - 1] = self.player_symbols[self.turn_index]
+                    self.broadcast({'type': 'move', 'message': f"{self.clients[sock]['username']} placed {self.player_symbols[self.turn_index]}."}, include_board=True)
                     
-                    # After making the move, broadcast the updated board
-                    self.broadcast({'type': 'move', 'message': f"{self.clients[sock]['username']} placed {self.player_symbols[self.turn_index]} at position {pos}."}, include_board=True)
-
                     winner = self.check_winner()
                     if winner == 'draw':
                         self.broadcast({'type': 'end', 'message': "Game Over! It's a draw!"}, include_board=True)
@@ -126,6 +123,7 @@ class TicTacToeServer:
                         self.broadcast({'type': 'turn', 'message': f"{self.clients[self.get_current_player()]['username']}'s turn."}, include_board=True, include_turn_prompt=True)
                 else:
                     self.send_message(sock, {'type': 'error', 'message': "Invalid move or position taken, try again."})
+                    self.broadcast({'type': 'turn', 'message': f"Invalid move or position taken. {self.clients[self.get_current_player()]['username']}'s turn."}, include_board=True)
 
         elif message['type'] == 'quit':
             self.broadcast({'type': 'end', 'message': f"{self.clients[sock]['username']} has quit the game."}, include_board=True)
@@ -149,10 +147,15 @@ class TicTacToeServer:
 
     def disconnect_client(self, client_socket):
         if client_socket in self.clients:
-            logging.info(f"Disconnecting {self.clients[client_socket]['username']}")
+            username = self.clients[client_socket]['username']
+            logging.info(f"Disconnecting {username}")
             self.selector.unregister(client_socket)
             client_socket.close()
             del self.clients[client_socket]
+            if len(self.clients) == 1:
+                # Notify the remaining client
+                remaining_client = next(iter(self.clients))
+                self.send_message(remaining_client, {'type': 'disconnect_notice', 'message': f"{username} has left the game."})
 
     def end_game(self):
         for client in list(self.clients.keys()):

@@ -1,11 +1,6 @@
 import argparse
 import socket
 import json
-import time
-import logging
-
-# Set up logging
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 class TicTacToeClient:
     def __init__(self, server_ip, server_port):
@@ -16,7 +11,7 @@ class TicTacToeClient:
 
     def connect_to_server(self):
         self.socket.connect((self.server_ip, self.server_port))
-        logging.info(f'Connected to Tic-Tac-Toe server at {self.server_ip}:{self.server_port}')
+        print(f'Connected to Tic-Tac-Toe server at {self.server_ip}:{self.server_port}')
 
     def receive_messages(self):
         try:
@@ -24,19 +19,19 @@ class TicTacToeClient:
             while True:
                 data = self.socket.recv(1024).decode('utf-8')
                 if not data:
-                    logging.info("Disconnected from server.")
+                    print("Disconnected from server.")
                     break
 
                 buffer += data
                 while '\n' in buffer:
-                    message_str, buffer = buffer.split('\n', 1)
+                    message_str, buffer = buffer.split('\n', 1)  # Split by newline
                     try:
                         message = json.loads(message_str)
                     except json.JSONDecodeError:
-                        logging.error("Failed to decode JSON:", message_str)
+                        print("Failed to decode JSON:", message_str)
                         continue
 
-                    logging.info(f"Received message: {message}")
+                    print(message.get('message'))
 
                     if message['type'] == 'username_request':
                         self.send_username()
@@ -49,8 +44,13 @@ class TicTacToeClient:
 
                     if "Game Over!" in message.get('message', ''):
                         break
+
+                    if message['type'] == 'disconnect_notice':
+                        print("The other player has disconnected.")
+                        self.handle_disconnect_option()
+                        return  # End the loop after handling disconnect option
         except (ConnectionResetError, BrokenPipeError):
-            logging.error("Connection to the server has been lost.")
+            print("Connection to the server has been lost.")
         finally:
             self.close_connection()
 
@@ -58,25 +58,35 @@ class TicTacToeClient:
         if not self.username:
             self.username = input("Enter your username: ")
         message = {'type': 'username_response', 'username': self.username}
-        self.socket.sendall((json.dumps(message) + '\n').encode('utf-8'))
+        self.socket.sendall((json.dumps(message) + '\n').encode('utf-8'))  # Add newline delimiter
 
     def send_move(self):
         move = input("Enter your move (1-9, q to quit): ")
         if move.lower() == 'q':
             message = {'type': 'quit'}
-            self.socket.sendall((json.dumps(message) + '\n').encode('utf-8'))
+            self.socket.sendall((json.dumps(message) + '\n').encode('utf-8'))  # Add newline delimiter
         else:
             try:
                 move = int(move)
                 message = {'type': 'move', 'position': move}
-                self.socket.sendall((json.dumps(message) + '\n').encode('utf-8'))
+                self.socket.sendall((json.dumps(message) + '\n').encode('utf-8'))  # Add newline delimiter
             except ValueError:
-                logging.error("Invalid input. Please enter a valid move.")
+                print("Invalid input. Please enter a valid move.")
                 self.send_move()
+
+    def handle_disconnect_option(self):
+        while True:
+            choice = input("The other player has left the game. Do you want to quit? (Type 'q' to quit): ")
+            if choice.lower() == 'q':
+                print("You have chosen to quit the game.")
+                self.close_connection()
+                break
+            else:
+                print("Invalid input. Type 'q' to quit.")
 
     def close_connection(self):
         self.socket.close()
-        logging.info('Disconnected from server.')
+        print('Disconnected from server.')
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Client for the Tic-Tac-Toe game.')
@@ -87,4 +97,3 @@ if __name__ == "__main__":
     client = TicTacToeClient(args.host, args.port)
     client.connect_to_server()
     client.receive_messages()
-
