@@ -24,7 +24,7 @@ class TicTacToeClient:
 
                 buffer += data
                 while '\n' in buffer:
-                    message_str, buffer = buffer.split('\n', 1)  # Split by newline
+                    message_str, buffer = buffer.split('\n', 1)
                     try:
                         message = json.loads(message_str)
                     except json.JSONDecodeError:
@@ -48,7 +48,7 @@ class TicTacToeClient:
                     if message['type'] == 'disconnect_notice':
                         print("The other player has disconnected.")
                         self.handle_disconnect_option()
-                        return  # End the loop after handling disconnect option
+                        return
         except (ConnectionResetError, BrokenPipeError):
             print("Connection to the server has been lost.")
         finally:
@@ -58,18 +58,18 @@ class TicTacToeClient:
         if not self.username:
             self.username = input("Enter your username: ")
         message = {'type': 'username_response', 'username': self.username}
-        self.socket.sendall((json.dumps(message) + '\n').encode('utf-8'))  # Add newline delimiter
+        self.socket.sendall((json.dumps(message) + '\n').encode('utf-8'))
 
     def send_move(self):
         move = input("Enter your move (1-9, q to quit): ")
         if move.lower() == 'q':
             message = {'type': 'quit'}
-            self.socket.sendall((json.dumps(message) + '\n').encode('utf-8'))  # Add newline delimiter
+            self.socket.sendall((json.dumps(message) + '\n').encode('utf-8'))
         else:
             try:
                 move = int(move)
                 message = {'type': 'move', 'position': move}
-                self.socket.sendall((json.dumps(message) + '\n').encode('utf-8'))  # Add newline delimiter
+                self.socket.sendall((json.dumps(message) + '\n').encode('utf-8'))
             except ValueError:
                 print("Invalid input. Please enter a valid move.")
                 self.send_move()
