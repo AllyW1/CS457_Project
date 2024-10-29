@@ -32,8 +32,6 @@ class TicTacToeServer:
         logging.info(f'Accepted connection from {addr}')
         client_socket.setblocking(False)
         self.selector.register(client_socket, selectors.EVENT_READ, data=addr)
-        
-        # Wait for the player to send their username
         self.send_message(client_socket, {'type': 'username_request', 'message': "Please enter a username:"})
 
     def broadcast(self, message, include_board=True, include_turn_prompt=False):
@@ -47,7 +45,7 @@ class TicTacToeServer:
 
     def send_message(self, client_socket, message):
         try:
-            message_str = json.dumps(message) + '\n'  # Add newline delimiter
+            message_str = json.dumps(message) + '\n'
             client_socket.sendall(message_str.encode('utf-8'))
             logging.info(f"Sent message to client: {message}")
         except (ConnectionResetError, BrokenPipeError):
@@ -95,11 +93,9 @@ class TicTacToeServer:
             self.send_message(sock, {'type': 'error', 'message': "The game is over. Please restart."})
             return
 
-        # Handle username assignment
         if 'type' in message and message['type'] == 'username_response':
             self.assign_username(sock, message.get('username', ''))
 
-        # Game logic (moves, quit, etc.)
         elif message['type'] == 'move':
             if sock != self.get_current_player():
                 self.send_message(sock, {'type': 'error', 'message': "Wait for your turn."})
@@ -153,7 +149,6 @@ class TicTacToeServer:
             client_socket.close()
             del self.clients[client_socket]
             if len(self.clients) == 1:
-                # Notify the remaining client
                 remaining_client = next(iter(self.clients))
                 self.send_message(remaining_client, {'type': 'disconnect_notice', 'message': f"{username} has left the game."})
 
