@@ -10,7 +10,7 @@ logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(
 class TicTacToeServer:
     def __init__(self, port, timeout=60):
         self.selector = selectors.DefaultSelector()
-        self.host = '0.0.0.0'  # Listen on all network interfaces
+        self.host = '0.0.0.0'
         self.port = port
         self.clients = {}
         self.board = [' '] * 9
