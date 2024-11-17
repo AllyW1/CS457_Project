@@ -8,11 +8,11 @@ This is a simple Tic-Tac-Toe game implemented using Python and sockets. Made for
 
 **How to play:**
 1. **Start the server:** Run the `server.py` script.
-   - terminal: python3 server.py [hostname] [port]
-   - Ex: python3 server.py localhost 9000
+   - terminal: python3 server.py -p [port]
+   - Ex: python3 server.py -p 9000
 2. **Connect clients:** Run the `client.py` script on two different machines or terminals.
-   - terminal: python3 client.py [hostname] [port]
-   - python3 client.py localhost 9000
+   - terminal: python3 client.py -i [hostname] -p [port]
+   - python3 client.py -i 127.0.0.1 -p 9000
    - ENSURE client and server are looking at the same port. In the example that is localhost 9000
    - Game won't start until two clients are connected to the server.
 3. **Play the game:** Players take turns entering their moves. The first player to get three in a row wins!
@@ -142,3 +142,27 @@ The requirements.txt is empty as I am only using the Standard Python Library. If
    - Assign unique identifiers to each player to distinguish them and track their game state.
    - Allow players to choose or be assigned unique usernames or avatars.
 
+**Step 4 (Sprint 4):**
+- Deliverables
+   - Implement state, input handling, wining conditions, and gave over handling, and user interface.
+   - Make sure client can be called like this:  client -i SERVER_IP/DNS -p PORT
+   - Make sure server can be called like this:  server -p PORT  (set the listening IP to 0.0.0.0)
+- Game State Management (continued):
+   - Update the game state based on player moves and winning conditions.
+   - Store information about the current player, the game board, and any relevant game settings.
+- Input Handling:
+   - Implement functions to handle user input (e.g., mouse clicks, keyboard input) and translate it into game actions (e.g., placing a piece on the board).
+   - Validate user input to ensure it is within the game's boundaries and rules.
+- Winning Conditions:
+   - Define the conditions for winning the game (e.g., three in a row, diagonal, etc.).
+   - Implement logic to check for winning conditions after each move.
+   - Notify players when a winner is determined or the game ends in a draw.
+- Game Over Handling:
+   - Implement mechanisms to handle the end of a game, including:
+   - Displaying the winner or announcing a draw.
+   - Resetting the game state for a new round.
+   - Providing options for players to start a new game or quit.
+- User Interface (UI):
+   - Develop a visually appealing and user-friendly UI for the game.
+   - Display the game board, player information, and game status.
+   - Provide clear and intuitive controls for players to interact with the game.
