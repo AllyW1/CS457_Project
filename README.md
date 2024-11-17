@@ -12,9 +12,11 @@ This is a simple Tic-Tac-Toe game implemented using Python and sockets. Made for
    - Ex: python3 server.py -p 9000
 2. **Connect clients:** Run the `client.py` script on two different machines or terminals.
    - terminal: python3 client.py -i [hostname] -p [port]
-   - python3 client.py -i 127.0.0.1 -p 9000
+   - python3 client.py -i antlion.cs.colostate.edu -p 9000
    - ENSURE client and server are looking at the same port. In the example that is localhost 9000
    - Game won't start until two clients are connected to the server.
+   - ![image](https://github.com/user-attachments/assets/38fd772a-cf86-4d26-ab32-7dfb2b93ed6e)
+
 3. **Play the game:** Players take turns entering their moves. The first player to get three in a row wins!
    - Players are allowed to set a username if they choose not to then they will be default assigned numbers/symbols: Player 1(X) and Player 2(O).
    - Players take turns entering their moves. The move is entered as a number (1-9), corresponding to the position on the Tic-Tac-Toe grid.
