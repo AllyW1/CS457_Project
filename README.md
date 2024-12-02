@@ -29,6 +29,15 @@ This is a simple Tic-Tac-Toe game implemented using Python and sockets. Made for
    - If the game results in a draw, it will announce "Game Over! The game is a draw!"
    - Game will force quit and Client Connections will be cleaned up. (If you want to play again just join clients again) * Server will force quit after a minute of no use. After this if you want to play again you will need to start the server again.
 
+**Final Project Information**
+1. Brief roadmap of where you would take your project
+   - I would fix the game so it gives the user an option to restart or quit game after winning, I would also make it so the server saves and tracks wins, in this i would create a way to authenticate users, potentially with passwords, I would also add encryption to ensure security, and create more security aimed at preventing DOS attacks.
+2. Retrospective on overall project
+   - What went right?
+      - I was able to create a working tic tac toc game, including two clients and maintaining all the proper win conditions, and by keeping it simple in the terminal with no extra requirenments beyond python3 I ran into minimal issues. I also think the way I designed the game made it pretty intuitive on how to play and covered cases like what if the user tries to not enter a user name or what if they accidently try to play in a spot thats already taken.
+   - What could be improved on?
+      - I was not able to fully implement allowing the clients to chose to restart or quit the game once they reached the end. I could've done more logging to be more clear on what the clients where doing.
+        
 **Game Message Protocol Specification:**
 - Message Types:
    - Join: Sent when a client joins the server.
