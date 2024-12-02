@@ -167,3 +167,14 @@ The requirements.txt is empty as I am only using the Standard Python Library. If
    - Develop a visually appealing and user-friendly UI for the game.
    - Display the game board, player information, and game status.
    - Provide clear and intuitive controls for players to interact with the game.
+
+**Step 5 (Sprint 5):**
+- Error Handling:
+   - Implement error handling mechanisms to catch and handle potential exceptions or unexpected situations.
+   - Handle network errors, invalid input, and other potential issues gracefully.
+   - Provide informative error messages to the user.
+- Integration Testing:
+   - Test the entire game system to ensure that all components work together as expected.
+   - Simulate different scenarios and test edge cases to identify potential bugs or issues.
+- Security/Risk Evaluation:
+   - Write a single paragraph or list describing what security issues your game may have and how they can be addressed. You do not need to address the security issues, just enumerate them and comment on how they could be addressed in a future iteration of the game.
