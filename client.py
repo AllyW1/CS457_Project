@@ -1,6 +1,7 @@
 import argparse
 import socket
 import json
+import sys
 
 class TicTacToeClient:
     def __init__(self, server_ip, server_port):
@@ -10,54 +11,61 @@ class TicTacToeClient:
         self.username = None
 
     def connect_to_server(self):
-        self.socket.connect((self.server_ip, self.server_port))
-        print(f"Connected to Tic-Tac-Toe server at {self.server_ip}:{self.server_port}")
+        try:
+            self.socket.connect((self.server_ip, self.server_port))
+            print(f"Connected to Tic-Tac-Toe server at {self.server_ip}:{self.server_port}")
+        except (ConnectionRefusedError, TimeoutError):
+            print("Error: Unable to connect to the server. Please check the server address and port.")
+            sys.exit(1)
 
     def receive_messages(self):
         try:
             buffer = ""
             while True:
-                data = self.socket.recv(1024).decode('utf-8')
-                if not data:
-                    print("Disconnected from server.")
+                try:
+                    data = self.socket.recv(1024).decode('utf-8')
+                    if not data:
+                        print("Disconnected from server.")
+                        break
+
+                    buffer += data
+                    while '\n' in buffer:
+                        message_str, buffer = buffer.split('\n', 1)
+                        try:
+                            message = json.loads(message_str)
+                        except json.JSONDecodeError:
+                            continue
+
+                        if message['type'] == 'username_request':
+                            self.send_username()
+                            continue
+
+                        print(message.get('message'))
+
+                        if 'board' in message:
+                            print(message['board'])
+
+                        if "Your move." in message.get('message', ''):
+                            self.send_move()
+
+                        if message.get('type') == 'prompt_restart':
+                            self.handle_game_over()
+                            continue
+
+                        if message.get('type') == 'end':
+                            print("The game has ended. Disconnecting...")
+                            return
+                except (ConnectionResetError, BrokenPipeError):
+                    print("Connection to the server was lost. Please try reconnecting.")
                     break
-
-                buffer += data
-                while '\n' in buffer:
-                    message_str, buffer = buffer.split('\n', 1)
-                    try:
-                        message = json.loads(message_str)
-                    except json.JSONDecodeError:
-                        print("Failed to decode JSON:", message_str)
-                        continue
-
-                    if message['type'] == 'username_request':
-                        self.send_username()
-                        continue
-
-                    print(message.get('message'))
-
-                    if 'board' in message:
-                        print(message['board'])
-
-                    if "Your move." in message.get('message', ''):
-                        self.send_move()
-
-                    if message.get('type') == 'prompt_restart':
-                        self.handle_game_over()
-                        continue
-
-                    if message.get('type') == 'end':
-                        print("The game has ended. Disconnecting...")
-                        return
-        except (ConnectionResetError, BrokenPipeError):
-            print("Connection to the server has been lost.")
         finally:
             self.close_connection()
 
     def send_username(self):
-        if not self.username:
-            self.username = input("Enter your username: ")
+        while not self.username:
+            self.username = input("Enter your username: ").strip()
+            if not self.username:
+                print("Error: Username cannot be empty. Please try again.")
         message = {'type': 'username_response', 'username': self.username}
         self.socket.sendall((json.dumps(message) + '\n').encode('utf-8'))
 
@@ -77,9 +85,9 @@ class TicTacToeClient:
                     self.socket.sendall((json.dumps(message) + '\n').encode('utf-8'))
                     break
                 else:
-                    print("Invalid input. Enter a number between 1 and 9.")
+                    print("Error: Invalid input. Enter a number between 1 and 9.")
             except ValueError:
-                print("Invalid input. Please enter a valid move.")
+                print("Error: Please enter a valid move.")
 
     def handle_game_over(self):
         print("Game over!")
@@ -96,11 +104,14 @@ class TicTacToeClient:
                     print("Waiting for the other player to decide...")
                     return
             else:
-                print("Invalid input. Please type 'y' or 'n'.")
+                print("Error: Invalid input. Please type 'y' or 'n'.")
 
     def close_connection(self):
-        self.socket.close()
-        print('Disconnected from server.')
+        try:
+            self.socket.close()
+            print('Disconnected from server.')
+        except OSError:
+            pass
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Client for the Tic-Tac-Toe game.")

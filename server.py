@@ -21,34 +21,44 @@ class TicTacToeServer:
         self.timeout = timeout
 
     def start_server(self):
-        self.server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-        self.server_socket.bind((self.host, self.port))
-        self.server_socket.listen()
-        self.server_socket.setblocking(False)
-        self.selector.register(self.server_socket, selectors.EVENT_READ)
-        logging.info(f"Server started on {self.host}:{self.port}")
+        try:
+            self.server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            self.server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+            self.server_socket.bind((self.host, self.port))
+            self.server_socket.listen()
+            self.server_socket.setblocking(False)
+            self.selector.register(self.server_socket, selectors.EVENT_READ)
+            logging.info(f"Server started on {self.host}:{self.port}")
+        except Exception as e:
+            logging.error(f"Error starting server: {e}")
+            exit(1)
 
     def accept_client(self):
-        client_socket, addr = self.server_socket.accept()
-        logging.info(f"Accepted connection from {addr}")
-        client_socket.setblocking(False)
-        self.selector.register(client_socket, selectors.EVENT_READ, data=addr)
+        try:
+            client_socket, addr = self.server_socket.accept()
+            logging.info(f"Accepted connection from {addr}")
+            client_socket.setblocking(False)
+            self.selector.register(client_socket, selectors.EVENT_READ, data=addr)
 
-        if len(self.clients) == 0:
-            self.reset_game()
+            if len(self.clients) == 0:
+                self.reset_game()
 
-        if client_socket not in self.clients:
-            self.clients[client_socket] = {'username': None, 'restart_decision': None}
-            self.send_message(client_socket, {'type': 'username_request', 'message': "Please enter a username:"})
-        self.update_last_activity()
+            if client_socket not in self.clients:
+                self.clients[client_socket] = {'username': None, 'restart_decision': None}
+                self.send_message(client_socket, {'type': 'username_request', 'message': "Please enter a username:"})
+            self.update_last_activity()
+        except Exception as e:
+            logging.error(f"Error accepting client: {e}")
 
     def send_message(self, client_socket, message):
         try:
             message_str = json.dumps(message) + '\n'
             client_socket.sendall(message_str.encode('utf-8'))
         except (ConnectionResetError, BrokenPipeError):
+            logging.info(f"Failed to send message to client. Disconnecting client.")
             self.disconnect_client(client_socket)
+        except Exception as e:
+            logging.error(f"Error sending message: {e}")
 
     def broadcast(self, message, include_board=True, include_turn_prompt=False):
         for client, data in self.clients.items():
@@ -91,6 +101,10 @@ class TicTacToeServer:
         except ConnectionResetError:
             self.disconnect_client(sock)
             return
+        except Exception as e:
+            logging.error(f"Unexpected error during message handling: {e}")
+            self.send_message(sock, {'type': 'error', 'message': "Unexpected error occurred."})
+            return
 
         try:
             message = json.loads(data)
@@ -111,30 +125,40 @@ class TicTacToeServer:
                     winner = self.check_winner()
                     if winner:
                         self.game_over = True
-                        self.broadcast({'type': 'end', 'message': f"Game over! {winner} wins!"}, include_board=True)
+                        winning_player = next((data['username'] for client, data in self.clients.items() if data.get('symbol') == winner), None)
+                        self.broadcast({'type': 'end', 'message': f"Game over! {winning_player} wins!"}, include_board=True)
                         self.prompt_restart()
                     else:
                         self.turn_index = 1 - self.turn_index
                         self.broadcast({'type': 'turn', 'message': "Next player's turn."}, include_board=True, include_turn_prompt=True)
                 else:
                     self.send_message(sock, {'type': 'error', 'message': "Invalid move. Try again."})
+                    self.send_message(sock, {'type': 'turn', 'message': "Your move.", 'board': self.get_board_string()})
 
         elif message.get('type') == 'restart_decision':
-            decision = message.get('decision')
-            self.clients[sock]['restart_decision'] = decision
-            if all('restart_decision' in c for c in self.clients.values()):
-                if all(c['restart_decision'] == 'y' for c in self.clients.values()):
-                    self.reset_game()
-                    self.broadcast({'type': 'start', 'message': "Both players agreed to restart the game!"}, include_board=True, include_turn_prompt=True)
-                else:
-                    self.end_game()
+            self.handle_restart_decision(sock, message.get('decision'))
 
         elif message.get('type') == 'quit':
-            self.broadcast({'type': 'end', 'message': "The game has ended due to a player quitting."})
+            username = self.clients[sock]['username']
+            self.broadcast({'type': 'end', 'message': f"The game has ended because {username} has quit."})
+            self.disconnect_client(sock)
             self.end_game()
 
+    def handle_restart_decision(self, sock, decision):
+        self.clients[sock]['restart_decision'] = decision
+        remaining_decisions = [data.get('restart_decision') for data in self.clients.values()]
+
+        if None not in remaining_decisions:
+            if 'n' in remaining_decisions:
+                self.broadcast({'type': 'end', 'message': "The game has ended because a player chose to quit."})
+                self.end_game()
+            elif all(d == 'y' for d in remaining_decisions):
+                self.reset_game()
+                self.broadcast({'type': 'start', 'message': "Both players agreed to restart the game!"}, include_board=True, include_turn_prompt=True)
+
     def prompt_restart(self):
-        self.broadcast({'type': 'prompt_restart', 'message': "Would you like to play again? (y/n)"}, include_board=False)
+        for client in self.clients:
+            self.send_message(client, {'type': 'prompt_restart', 'message': "Would you like to play again? (y/n)"})
 
     def reset_game(self):
         self.board = [' '] * 9
@@ -148,7 +172,7 @@ class TicTacToeServer:
         self.clients[sock]['symbol'] = self.player_symbols[len(self.clients) - 1]
         self.send_message(sock, {'type': 'response', 'message': f"Welcome {username}. You are {self.clients[sock]['symbol']}."})
         if len(self.clients) == 2:
-            self.broadcast({'type': 'start', 'message': "Game starts now!"}, include_turn_prompt=True)
+            self.broadcast({'type': 'start', 'message': "Game starts now!"}, include_board=True, include_turn_prompt=True)
 
     def disconnect_client(self, sock):
         if sock in self.clients:
