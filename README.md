@@ -27,7 +27,7 @@ This is a simple Tic-Tac-Toe game implemented using Python and sockets. Made for
 4. **End of Game:**
    - When a player wins, the game will announce "Game Over! Player (username or X/O) wins!"
    - If the game results in a draw, it will announce "Game Over! The game is a draw!"
-   - Game will force quit, Server and Client Connections will be cleaned up. (If you want to play again just start up the server and clients again)
+   - Game will force quit and Client Connections will be cleaned up. (If you want to play again just join clients again) * Server will force quit after a minute of no use. After this if you want to play again you will need to start the server again.
 
 **Game Message Protocol Specification:**
 - Message Types:
