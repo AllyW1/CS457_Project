@@ -5,12 +5,14 @@ import sys
 
 class TicTacToeClient:
     def __init__(self, server_ip, server_port):
+        #Initialize the client with server IP and port.
         self.server_ip = server_ip
         self.server_port = server_port
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.username = None
 
     def connect_to_server(self):
+        #Connect to the Tic-Tac-Toe server.
         try:
             self.socket.connect((self.server_ip, self.server_port))
             print(f"Connected to Tic-Tac-Toe server at {self.server_ip}:{self.server_port}")
@@ -19,6 +21,7 @@ class TicTacToeClient:
             sys.exit(1)
 
     def receive_messages(self):
+        #Listen for messages from the server and handle them.
         try:
             buffer = ""
             while True:
@@ -62,6 +65,7 @@ class TicTacToeClient:
             self.close_connection()
 
     def send_username(self):
+        #Send the username to the server after being prompted.
         while not self.username:
             self.username = input("Enter your username: ").strip()
             if not self.username:
@@ -70,6 +74,7 @@ class TicTacToeClient:
         self.socket.sendall((json.dumps(message) + '\n').encode('utf-8'))
 
     def send_move(self):
+        #Prompt the user for a move and send it to the server.
         while True:
             move = input("Enter your move (1-9, q to quit): ").strip()
             if move.lower() == 'q':
@@ -90,6 +95,7 @@ class TicTacToeClient:
                 print("Error: Please enter a valid move.")
 
     def handle_game_over(self):
+        #Handle the game over scenario and prompt for restart.
         print("Game over!")
         while True:
             decision = input("Would you like to play again? (y/n): ").strip().lower()
@@ -107,6 +113,7 @@ class TicTacToeClient:
                 print("Error: Invalid input. Please type 'y' or 'n'.")
 
     def close_connection(self):
+        #Close the connection to the server.
         try:
             self.socket.close()
             print('Disconnected from server.')
